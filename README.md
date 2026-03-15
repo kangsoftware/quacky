@@ -1,6 +1,18 @@
 # Quacky
 Simple and open social media
 
+It's basically another social media site built from the ground up. **Currently v1 so expect some bugs! I'm still working on fixing them.**
+
+## Features
+
+- User posting, liking, reposts, sharing, attachments
+- Notifications
+- User profiles
+- Settings
+- Search
+- Report abuse
+- Discord webhook logging
+
 ## Selfhost
 
 We use docker to package Quacky. You can build and run the application by following the steps below:
