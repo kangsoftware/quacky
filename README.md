@@ -1,16 +1,26 @@
 # Quacky
 Simple and open social media
 
-## Quick Start with Docker
+## Selfhost
 
 We use docker to package Quacky. You can build and run the application by following the steps below:
 
 ```bash
-git clone https://kang.software/git/quacky
+# 1. Clone repo
+git clone https://github.com/kangsoftware/quacky
 cd quacky
-cp example.docker-compose.yml .docker-compose.yml
 
-docker compose up -d --build # Start services
+# 2. Configure your platform settings
+cp example.docker-compose.yml docker-compose.yml
+
+# 3. Start services
+docker compose up -d
+
+# 4. Migrate database tables
+npx prisma migrate dev
+
+# 5.
+# Go to http://localhost:3001 and create an account to start!
 ```
 
 ## Contributing & Docs
