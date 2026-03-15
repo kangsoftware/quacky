@@ -1,0 +1,10 @@
+{
+    "posting": {
+        "maxLength": 280,
+        "maxAttachments": 3,
+        "maxImageMB": 5,
+        "maxVideoMB": 50,
+        "maxFileMB": 100,
+        "allowedFileTypes": ["application/pdf", "text/plain", "application/zip", "video/mp4", "video/webm", "image/jpeg", "image/png", "image/gif"]
+    }
+}

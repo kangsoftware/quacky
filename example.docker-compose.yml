@@ -1,0 +1,75 @@
+# Services
+# Quacky app: Port 3001
+# CDN: Port 3002
+# CDN ADMIN: Port 3003
+# Postgres: Port 3004
+
+services:
+  quacky:
+    image: linuskang/quacky:latest
+    # container_name: app
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+      - cdn
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://quacky:quackyapp@postgres:5432/quacky
+      BETTER_AUTH_SECRET: "your-auth-secret"
+      BETTER_AUTH_URL: "http://localhost:3001"
+      BETTER_AUTH_API_KEY: your-api-key
+      RESEND_API_KEY: your-api-key
+      EMAIL_FROM: "Quacky <noreply@your-mail-domain.com>"
+      APP_NAME: "Quacky"
+      APP_VERSION: "v1.0.0"
+      APP_DESCRIPTION: "Simple and open social media"
+      COPYRIGHT: "© 2026 Linus Kang. All rights reserved."
+      SUPPORT_EMAIL: "support@your-mail-domain.com"
+      DISCORD_WEBHOOK_URL: "your-webhook-url"
+      S3_ENDPOINT_URL: "http://cdn:9001"
+      S3_ACCESS_KEY: quackycdn
+      S3_SECRET_KEY: quackycdn
+      S3_REGION: us-east-1
+      S3_BUCKET_NAME: quacky
+      S3_PUBLIC_URL: "http://localhost:3003/quacky"
+
+    ports:
+      - "3001:3001"
+
+  cdn:
+    image: linuskang/opens3:1.0.0
+    container_name: cdn
+    restart: always
+    environment:
+      OPENS3_ACCESS_KEY: quackycdn
+      OPENS3_SECRET_KEY: quackycdn
+      OPENS3_REGION: us-east-1
+      OPENS3_DATA_DIR: /data
+    volumes:
+      - cdn-data:/data
+    ports:
+      - "3002:9000"
+      - "3003:9001"
+
+  postgres:
+    image: postgres:16
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: quacky
+      POSTGRES_PASSWORD: quackyapp
+      POSTGRES_DB: quacky
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "3004:5432"
+
+volumes:
+  cdn-data:
+    driver: local
+  db-data:
+    driver: local
