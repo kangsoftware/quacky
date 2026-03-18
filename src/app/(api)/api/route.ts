@@ -7,6 +7,7 @@ export async function GET() {
             name: env.APP_NAME,
             url: env.BETTER_AUTH_URL,
             version: env.APP_VERSION,
+            build: env.APP_BUILD,
             description: env.APP_DESCRIPTION,
             copyright: env.COPYRIGHT,
         }

@@ -26,6 +26,7 @@ services:
       EMAIL_FROM: "Quacky <noreply@your-mail-domain.com>"
       APP_NAME: "Quacky"
       APP_VERSION: "v1.0.0"
+      APP_BUILD: "prod"
       APP_DESCRIPTION: "Simple and open social media"
       COPYRIGHT: "© 2026 Linus Kang. All rights reserved."
       SUPPORT_EMAIL: "support@your-mail-domain.com"

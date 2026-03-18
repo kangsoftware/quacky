@@ -16,6 +16,7 @@ export const env = createEnv(
       EMAIL_FROM: z.string(),
       APP_NAME: z.string().default("Quacky"),
       APP_VERSION: z.string().default("dev"),
+      APP_BUILD: z.string().default("dev"),
       APP_DESCRIPTION: z.string().default("Social media, simplified."),
       COPYRIGHT: z.string().default("Copyright © 2026 Linus Kang. All rights reserved."),
       SUPPORT_EMAIL: z.string(),

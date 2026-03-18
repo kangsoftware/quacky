@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -15,8 +15,29 @@ import { authClient } from "@/client/auth";
 export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const [emailSentTo, setEmailSentTo] = useState<string | null>(null);
+    const [appInfo, setAppInfo] = useState<{ version: string; build: string } | null>(null);
 
     const { register, handleSubmit, formState: { isSubmitting }, reset } = useForm<{ email: string }>();
+
+    useEffect(() => {
+        const fetchAppInfo = async () => {
+            try {
+                const response = await fetch("/api");
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data?.version && data?.build) {
+                    setAppInfo({ version: data.version, build: data.build });
+                }
+            } catch {}
+        };
+
+        fetchAppInfo();
+    }, []);
 
     const onSubmit = async (data: { email: string }) => {
         setError(null);
@@ -29,7 +50,7 @@ export default function LoginPage() {
             });
 
             if (result?.error) {
-                setError("Is your email registered? Please sign up first.");
+                setError('Is your email registered? Please sign up first at /onboarding.');
                 return;
             }
 
@@ -101,6 +122,13 @@ export default function LoginPage() {
                                 Sign up
                             </a>
                         </p>
+
+                        <p className="text-xs text-muted-foreground text-center">
+                            {appInfo ??
+                            `Running ${appInfo.version} (build ${appInfo.build})`
+                            }
+                        </p>
+
 
                     </form>
                 </div>
