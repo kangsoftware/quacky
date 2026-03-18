@@ -124,9 +124,7 @@ export default function LoginPage() {
                         </p>
 
                         <p className="text-xs text-muted-foreground text-center">
-                            {appInfo ??
-                            `Running ${appInfo.version} (build ${appInfo.build})`
-                            }
+                            Running ${appInfo.version} (build ${appInfo.build})
                         </p>
 
 
