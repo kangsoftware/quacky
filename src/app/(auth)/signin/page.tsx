@@ -30,9 +30,7 @@ export default function LoginPage() {
 
                 const data = await response.json();
 
-                if (data?.version && data?.build) {
                     setAppInfo({ version: data.version, build: data.build });
-                }
             } catch {}
         };
 
