@@ -15,7 +15,7 @@ import { authClient } from "@/client/auth";
 export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const [emailSentTo, setEmailSentTo] = useState<string | null>(null);
-    const [appInfo, setAppInfo] = useState<{ version: string; build: string } | null>(null);
+    const [appInfo, setAppInfo] = useState<{ version: string; build: string }>({ version: "dev", build: "dev build" });
 
     const { register, handleSubmit, formState: { isSubmitting }, reset } = useForm<{ email: string }>();
 
@@ -122,7 +122,7 @@ export default function LoginPage() {
                         </p>
 
                         <p className="text-xs text-muted-foreground text-center">
-                            Running ${appInfo.version} (build ${appInfo.build})
+                            Running {appInfo.version} (build {appInfo.build})
                         </p>
 
 
