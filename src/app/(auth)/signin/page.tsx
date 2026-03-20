@@ -110,8 +110,9 @@ export default function LoginPage() {
                         </Button>
 
                         <p className="text-xs text-muted-foreground text-center">
-                            By continuing, you agree to abide by our{" "}
-                            <a href="/terms" className="underline">Terms</a>.
+                            By signing in, you agree to abide by our{" "}
+                            <a href="/terms" className="underline">Terms</a> and{" "}
+                            <a href="/privacy" className="underline">Privacy Policy</a>.
                         </p>
 
                         <p className="text-xs text-muted-foreground text-center">
@@ -121,8 +122,8 @@ export default function LoginPage() {
                             </a>
                         </p>
 
-                        <p className="text-xs text-muted-foreground text-center">
-                            Running {appInfo.version} (build {appInfo.build})
+                        <p className="mt-8 text-xs text-muted-foreground text-center">
+                            {appInfo.version} ({appInfo.build})
                         </p>
 
 
