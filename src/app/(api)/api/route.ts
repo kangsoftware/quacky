@@ -10,6 +10,7 @@ export async function GET() {
             build: env.APP_BUILD,
             description: env.APP_DESCRIPTION,
             copyright: env.COPYRIGHT,
-        }
+        },
+        { status: 200 }
     )
 }
