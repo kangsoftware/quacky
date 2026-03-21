@@ -59,8 +59,12 @@ export async function PATCH(req: NextRequest) {
             },
         });
 
-        Discord.logToWebhook(
-            `Account updated:\nUser ID: ${user.id}\nName: ${user.name}\nHandle: ${user.handle}\nBio: ${user.bio}\nPrivate Account: ${user.privateAccount}\nEmail Notifications: ${user.emailNotif}`
+        Discord.new(
+            {
+                username: "Quacky",
+                avatar_url: "https://quackycdn.linus.my/pub/Logo.png",
+                content: `Account updated:\nUser ID: ${user.id}\nName: ${user.name}\nHandle: ${user.handle}\nBio: ${user.bio}\nPrivate Account: ${user.privateAccount}\nEmail Notifications: ${user.emailNotif}`
+            }
         );
 
         return NextResponse.json(
