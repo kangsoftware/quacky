@@ -30,16 +30,40 @@ export class SafetyService {
         reason: string
     ) {
         try {
-            var reportId = randomUUID();
 
-            Discord.logToWebhook(
-                `New content report:\nreportID: ${reportId}\nReporter ID: ${reporterId}\nReporter Handle: ${reporterHandle}\nContent Author ID: ${contentAuthorId}\nContent Author Handle: ${contentAuthorHandle}\nContent ID: ${contentId}\nContent Type: ${contentType}\nReason: ${reason}`
+            const reportId = randomUUID();
+
+            Discord.new(
+                {
+                    username: "Quacky",
+                    avatar_url: "https://quackycdn.linus.my/pub/Logo.png",
+                    content: `New content report #${reportId}: @${contentAuthorHandle} (${contentAuthorId})`,
+                    embeds: [
+                        {
+                            title: "New Content Report",
+                            description: "A new content report has been submitted.",
+                            color: 0x4d1c00,
+                            timestamp: new Date().toISOString(),
+                            fields: [
+                                { name: "User ID", value: contentAuthorId ?? "unknown", inline: false },
+                                { name: "Name", value: contentAuthorHandle, inline: true },
+                                { name: "Handle", value: `@${contentAuthorHandle}`, inline: true },
+                                { name: "Content ID", value: contentId, inline: false },
+                                { name: "Content Type", value: contentType, inline: false },
+                                { name: "Reason", value: reason, inline: false },
+                                { name: "Reporter User ID", value: reporterId || "unknown", inline: false },
+                                { name: "Reporter Handle", value: reporterHandle || "unknown", inline: false },
+                            ],
+                        }
+                    ],
+                }
             )
 
             return {
                 success: true,
                 reportId: reportId,
             };
+
         } catch (err: any) {
             return {
                 success: false,
@@ -56,12 +80,33 @@ export class SafetyService {
         reason: string
     ) {
         try {
-            Discord.logToWebhook(
-                `New user report:\nReporter ID: ${reporterId}\nReporter Handle: ${reporterHandle}\nReported User ID: ${reportedUserId}\nReported User Handle: ${reportedUserHandle}\nReason: ${reason}`
+            Discord.new(
+                {
+                    username: "Quacky",
+                    avatar_url: "https://quackycdn.linus.my/pub/Logo.png",
+                    content: `New user report: @${reportedUserHandle} (${reportedUserId})`,
+                    embeds: [
+                        {
+                            title: "New User Report",
+                            description: "A new user report has been submitted.",
+                            color: 0x4d1c00,
+                            timestamp: new Date().toISOString(),
+                            fields: [
+                                { name: "Reported User ID", value: reportedUserId ?? "unknown", inline: false },
+                                { name: "Reported Handle", value: `@${reportedUserHandle}`, inline: true },
+                                { name: "Reason", value: reason, inline: false },
+                                { name: "Reporter User ID", value: reporterId || "unknown", inline: false },
+                                { name: "Reporter Handle", value: reporterHandle || "unknown", inline: false },
+                            ],
+                        }
+                    ],
+                }
             )
+
             return {
                 success: true,
             };
+
         } catch (err: any) {
             return {
                 success: false,
