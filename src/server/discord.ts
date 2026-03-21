@@ -81,10 +81,6 @@ export class Discord {
             }
         }
     }
-
-    static async logToWebhook(content: string, webhookUrl: string = env.DISCORD_WEBHOOK_URL) {
-        return this.new({ content }, webhookUrl);
-    }
 }
 
 export default Discord;
