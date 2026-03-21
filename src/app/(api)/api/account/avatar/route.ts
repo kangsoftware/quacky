@@ -30,8 +30,12 @@ export async function POST(req: NextRequest) {
 
         await prisma.user.update({ where: { id: session.user.id }, data: { image: url } });
 
-        await Discord.logToWebhook(
-            `@${session.user.handle} (${session.user.id}) updated their avatar: ${url}`
+        await Discord.new(
+            {
+                username: "Quacky",
+                avatar_url: "https://quackycdn.linus.my/pub/Logo.png",
+                content: `@${session.user.handle} (${session.user.id}) updated their avatar: ${url}`
+            }
         );
 
         return NextResponse.json({ url }, { status: 200 });
