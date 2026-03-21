@@ -6,5 +6,15 @@
         "maxVideoMB": 50,
         "maxFileMB": 100,
         "allowedFileTypes": ["application/pdf", "text/plain", "application/zip", "video/mp4", "video/webm", "image/jpeg", "image/png", "image/gif"]
+    },
+    "signup": {
+        "reservedHandles": [
+            "admin",
+            "system",
+            "moderator",
+            "quackyteam",
+            "bot",
+            "support"
+        ]
     }
 }

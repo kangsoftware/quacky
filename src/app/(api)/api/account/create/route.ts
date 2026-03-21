@@ -23,16 +23,6 @@ export async function POST(req: NextRequest) {
     handle = String(handle).toLowerCase();
     email = String(email).toLowerCase();
 
-    // Are handle of email taken?
-    const isTaken = await Users.isTaken(handle, email);
-
-    if (isTaken) {
-        return NextResponse.json(
-            { error: "Handle or email is already taken" },
-            { status: 400 }
-        );
-    }
-
     // Create user
     try {
         // Create the new user
@@ -41,6 +31,13 @@ export async function POST(req: NextRequest) {
             handle,
             email
         )
+
+        if (!result.success) {
+            return NextResponse.json(
+                { error: result.error },
+                { status: 500 }
+            );
+        }
 
         // Send welcome email
         await Mail.send(

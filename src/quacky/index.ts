@@ -4,6 +4,7 @@
 
 import prisma from "@/server/db";
 import Discord from "@/server/discord";
+import config from "@/config.json";
 
 import type { PostAttachment } from "@/types";
 
@@ -299,6 +300,21 @@ export class Users {
         banReason?: string,
         banExpires?: Date,
     ) {
+
+        if (config.signup.reservedHandles.includes(handle.toLowerCase())) {
+            return {
+                success: false,
+                error: "The chosen handle is reserved. Please choose a different one.",
+            };
+        }
+
+        if (await Users.isTaken(handle, email)) {
+            return {
+                success: false,
+                error: "Handle or email is already taken.",
+            };
+        }
+
         try {
             const result = await prisma.user.create(
                 {
