@@ -1,63 +1,57 @@
+// (c) 2025-2026 Linus Kang. Licensed under the Creative Commons Attribution-NonCommercial 4.0
+// For more information, refer to https://creativecommons.org/licenses/by-nc/4.0/
+// This file is a part of the Quacky project. For more information, see https://kang.software/git/quacky
+
 "use client";
 
 import Link from "next/link";
 import { formatDistanceToNow, format, differenceInDays } from "date-fns";
-import { Bell, Check, AtSign, LucideIcon } from "lucide-react";
 
-interface Notification {
+import { BadgeCheck, Bell, Check } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+
+export interface NotificationItem {
     id: string;
     type: string;
     message: string;
     read: boolean;
     createdAt: string | Date;
-    actorId?: string;
+    actorId?: string | null;
     postId?: string;
     replyId?: string;
-    actor?: {
+    actor: {
         id: string;
         name: string;
         handle: string;
-        image?: string | null;
-        verified?: boolean;
+        image?: string;
+        verified: boolean;
     };
 }
 
 interface NotificationsListProps {
-    notifications: Notification[];
+    notifications: NotificationItem[];
     onMarkRead?: (id: string) => void;
     onMarkAllRead?: () => void;
 }
-
-interface NotificationMeta {
-    label: string;
-    icon: LucideIcon;
-}
-
-const shortenId = (id?: string) => {
-    if (!id) return "";
-    if (id.length <= 12) return id;
-    return `${id.slice(0, 6)}...${id.slice(-4)}`;
-};
 
 export default function NotificationsList({
     notifications,
     onMarkRead,
 }: NotificationsListProps) {
+
     const getTimestamp = (createdAt: string | Date) => {
         return differenceInDays(new Date(), new Date(createdAt)) > 7
             ? format(new Date(createdAt), "MMM d, yyyy")
             : formatDistanceToNow(new Date(createdAt), { addSuffix: true });
     };
 
-    const unreadCount = notifications.filter((n) => !n.read).length;
-
     if (notifications.length === 0) {
         return (
             <div className="rounded-xl bg-[var(--lynt)] border border-border p-12 text-center">
-                <Bell size={48} className="mx-auto mb-4 text-muted-foreground" />
+                <Bell size={48} fill="currentColor" className="mx-auto mb-4 text-primary" />
                 <p className="text-lg font-bold text-primary">No notifications yet</p>
                 <p className="text-sm text-muted-foreground mt-2">
-                    When someone interacts with your posts, you'll see it here
+                    crickets...
                 </p>
             </div>
         );
@@ -76,58 +70,57 @@ export default function NotificationsList({
                             key={notification.id}
                             className={`rounded-xl border p-4 flex gap-3 transition-all duration-200 bg-[var(--lynt)] border-border`}
                         >
-
                             <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-[11px] uppercase tracking-wide font-bold text-muted-foreground">Notification</span>
-                                    {isUnread && <span className="size-1.5 rounded-full bg-primary" />}
-                                </div>
 
-                                {notification.actor ? (
-                                    <div className="flex items-center gap-2 mb-2">
-                                        {notification.actor.image ? (
-                                            <img
-                                                src={notification.actor.image}
-                                                alt={notification.actor.name}
-                                                className="size-6 rounded-full object-cover"
+                                <div className="flex items-center gap-2 mb-2">
+
+                                    <Avatar className="w-7 h-7 shrink-0">
+                                        <AvatarImage
+                                            src={notification.actor.image || ""}
+                                            alt={
+                                                notification.actor.name
+                                            }
+                                        />
+                                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                                            {notification.actor.name.charAt(0).toUpperCase()}
+                                        </AvatarFallback>
+                                    </Avatar>
+
+                                    <Link
+                                        href={`/${notification.actor.handle}`}
+                                        className="font-bold text-primary hover:underline text-sm"
+                                    >
+                                        {notification.actor.name}
+                                    </Link>
+
+                                    {notification.actor.verified && (
+                                        <div className="p-0 -ml-1">
+                                            <BadgeCheck
+                                                className="text-primary"
+                                                size={20}
+                                                fill="currentColor"
+                                                stroke="var(--lynt)"
                                             />
-                                        ) : (
-                                            <div className="size-6 rounded-full bg-primary text-background flex items-center justify-center text-xs font-bold">
-                                                {notification.actor.name.charAt(0).toUpperCase()}
-                                            </div>
-                                        )}
-                                        <Link
-                                            href={`/${notification.actor.handle}`}
-                                            className="font-bold text-primary hover:underline text-sm"
-                                        >
-                                            {notification.actor.name}
-                                        </Link>
-                                        <span className="text-xs text-muted-foreground font-bold">
-                                            @{notification.actor.handle}
-                                        </span>
-                                    </div>
-                                ) : notification.actorId ? (
-                                    <div className="inline-flex items-center gap-1 mb-2 rounded-md border border-border bg-background px-2 py-1 text-xs font-bold text-muted-foreground">
-                                        <AtSign size={12} />
-                                        actor {shortenId(notification.actorId)}
-                                    </div>
-                                ) : null}
+                                        </div>
+                                    )}
+
+                                    <span className="text-xs text-muted-foreground font-bold -ml-1">
+                                        @{notification.actor.handle}
+                                    </span>
+
+                                </div>
 
                                 <p className="text-sm text-primary font-medium leading-relaxed whitespace-pre-line">
                                     {notification.message}
                                 </p>
 
-                                <div className="mt-2 flex items-center gap-3">
-                                    <p className="text-xs text-muted-foreground font-bold">{timestamp}</p>
-                                    {notification.postId && (
-                                        <Link
-                                            href={`/post/${notification.postId}`}
-                                            className="text-xs font-bold text-primary hover:underline"
-                                        >
-                                            View post
-                                        </Link>
-                                    )}
-                                </div>
+                                {notification.postId && (
+                                    <div className="mt-2 flex items-center gap-3">
+                                        <p className="text-xs text-muted-foreground font-bold">{timestamp}</p>
+                                        <Link href={`/post/${notification.postId}`} className="text-xs font-bold text-primary hover:underline">View post</Link>
+                                    </div>
+                                )}
+
                             </div>
 
                             {isUnread && onMarkRead && (
@@ -139,6 +132,7 @@ export default function NotificationsList({
                                     <Check size={18} />
                                 </button>
                             )}
+
                         </div>
                     );
                 })}

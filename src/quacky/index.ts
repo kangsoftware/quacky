@@ -2,11 +2,12 @@
 // For more information, refer to https://creativecommons.org/licenses/by-nc/4.0/
 // This file is a part of the Quacky project. For more information, see https://kang.software/git/quacky
 
-import prisma from "@/server/db"
-import Discord from "@/server/discord"
-import type { PostAttachment } from "@/types"
+import prisma from "@/server/db";
+import Discord from "@/server/discord";
 
-import { randomUUID } from "crypto"
+import type { PostAttachment } from "@/types";
+
+import { randomUUID } from "crypto";
 
 const normalizeAttachments = (attachments: unknown): PostAttachment[] => {
     return Array.isArray(attachments) ? attachments as PostAttachment[] : [];
@@ -76,7 +77,7 @@ export class NotifyService {
         userId: string,
         type: string,
         message: string,
-        actorId?: string,
+        actorId: string,
         postId?: string,
         replyId?: string
     ) {
@@ -139,37 +140,23 @@ export class NotifyService {
                         createdAt: "desc",
                     },
                     take: limit,
+                    include: {
+                        actor: {
+                            select: {
+                                id: true,
+                                name: true,
+                                handle: true,
+                                image: true,
+                                verified: true,
+                            },
+                        },
+                    },
                 }
-            );
-
-            const enrichedNotifications = await Promise.all(
-                result.map(async (notification) => {
-                    if (notification.actorId) {
-                        const actor = await prisma.user.findUnique(
-                            {
-                                where: { id: notification.actorId },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    handle: true,
-                                    image: true,
-                                    verified: true,
-                                }
-                            }
-                        );
-
-                        return {
-                            ...notification,
-                            actor,
-                        };
-                    }
-                    return notification;
-                })
             );
 
             return {
                 success: true,
-                notifications: enrichedNotifications,
+                notifications: result,
             };
 
         } catch (err: any) {

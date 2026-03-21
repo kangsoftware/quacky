@@ -2,9 +2,10 @@
 // For more information, refer to https://creativecommons.org/licenses/by-nc/4.0/
 // This file is a part of the Quacky project. For more information, see https://kang.software/git/quacky
 
-import { Users } from "@/quacky"
-import Mail from "@/server/mail";
 import { NextRequest, NextResponse } from "next/server";
+import { Users, NotifyService } from "@/quacky"
+import { Discord } from "@/server/discord";
+import Mail from "@/server/mail";
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
@@ -18,9 +19,11 @@ export async function POST(req: NextRequest) {
         );
     }
 
+    // Sanitize
     handle = String(handle).toLowerCase();
     email = String(email).toLowerCase();
 
+    // Are handle of email taken?
     const isTaken = await Users.isTaken(handle, email);
 
     if (isTaken) {
@@ -30,14 +33,16 @@ export async function POST(req: NextRequest) {
         );
     }
 
+    // Create user
     try {
         // Create the new user
-        await Users.new(
+        const result = await Users.new(
             name,
             handle,
             email
         )
 
+        // Send welcome email
         await Mail.send(
             email,
             `Welcome to Quacky, ${name}!`,
@@ -137,6 +142,37 @@ export async function POST(req: NextRequest) {
             </body>
             </html>
             `
+        );
+
+        // Send welcome notification
+        await NotifyService.create(
+            result.user?.id!,
+            'system:message',
+            `Welcome to Quacky, ${name}!\n\nWe're really glad you joined our humble, open community. Quacky is a place to connect, share ideas, and build things together.\n\nDid you know you can also self-host Quacky for you and your friends to have a private, relaxed social media space? You can learn more here: https://quacky.linus.my/self-host\n\nQuacky is still growing, so if you have any feedback, ideas, or things you'd like to see improved, I'd really love to hear from you.\n\n\nThanks for giving Quacky a try.\nThe Quacky Team`,
+            'quacky',
+        );
+
+        // Log for mods.
+        await Discord.new(
+            {
+                username: "Quacky",
+                avatar_url: "https://quackycdn.linus.my/pub/Logo.png",
+                content: `New account created: @${handle} (${email})`,
+                embeds: [
+                    {
+                        title: "New Account Created",
+                        description: "A new Quacky account was created via. onboarding.",
+                        color: 0x4d1c00,
+                        timestamp: new Date().toISOString(),
+                        fields: [
+                            { name: "User ID", value: result.user?.id ?? "unknown", inline: false },
+                            { name: "Name", value: name, inline: true },
+                            { name: "Handle", value: `@${handle}`, inline: true },
+                            { name: "Email", value: email, inline: false },
+                        ],
+                    }
+                ],
+            }
         );
 
         return NextResponse.json(

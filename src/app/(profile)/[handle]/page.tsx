@@ -201,10 +201,10 @@ export default async function ProfilePage({ params }: PageParam) {
                                     </p>
                                 )}
 
-                                {/* <div className="flex gap-3">
+                                <div className="flex gap-3">
                                     <FollowButton targetUserId={user.id} />
-                                    <Button variant="outline" className="rounded-lg font-bold cursor-pointer">Message</Button>
-                                </div> */}
+                                    {/* <Button variant="outline" className="rounded-lg font-bold cursor-pointer">Message</Button> */}
+                                </div>
                             </div>
                         </div>
 

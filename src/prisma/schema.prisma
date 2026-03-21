@@ -25,14 +25,15 @@ model User {
   banReason  String?
   banExpires DateTime?
 
-  sessions Session[]
-  accounts Account[]
-  posts    Post[]
-  likes    Like[]    @relation("UserLikes")
-  retweets Retweet[] @relation("UserRetweets")
-  replies  Reply[]
-  following Follow[] @relation("UserFollowing")
-  followers Follow[] @relation("UserFollowers")
+  sessions      Session[]
+  accounts      Account[]
+  posts         Post[]
+  likes         Like[]         @relation("UserLikes")
+  retweets      Retweet[]      @relation("UserRetweets")
+  replies       Reply[]
+  following     Follow[]       @relation("UserFollowing")
+  followers     Follow[]       @relation("UserFollowers")
+  notifications Notification[]
 
   @@unique([email])
   @@map("user")
@@ -52,13 +53,13 @@ model Follow {
 }
 
 model Post {
-  id       String  @id @default(cuid())
-  authorId String
-  author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  content  String
+  id          String  @id @default(cuid())
+  authorId    String
+  author      User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  content     String
   attachments Json?
-  readOnly Boolean @default(false)
-  pinned   Boolean @default(false)
+  readOnly    Boolean @default(false)
+  pinned      Boolean @default(false)
 
   isHidden  Boolean @default(false)
   isDeleted Boolean @default(false)
@@ -104,10 +105,10 @@ model Like {
 }
 
 model Retweet {
-  userId String
-  postId String
-  user   User   @relation("UserRetweets", fields: [userId], references: [id], onDelete: Cascade)
-  post   Post   @relation("PostRetweets", fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  postId    String
+  user      User     @relation("UserRetweets", fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation("PostRetweets", fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
   @@id([userId, postId])
@@ -117,13 +118,15 @@ model Retweet {
 model Notification {
   id        String   @id @default(cuid())
   userId    String
-  type      String // LIKE, REPLY, FOLLOW, MENTION, RETWEET
-  actorId   String? // Who performed the action
-  postId    String? // Related post if applicable
-  replyId   String? // Related reply if applicable
+  type      String
+  actorId   String
+  postId    String?
+  replyId   String?
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
   message   String
+
+  actor User @relation(fields: [actorId], references: [id])
 
   @@index([userId])
   @@index([createdAt])
