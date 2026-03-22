@@ -7,10 +7,12 @@ import { auth } from "@/server/auth";
 
 import { Users } from "@/quacky";
 
-type Params = { params: Promise<{ handle: string }> };
+interface Params {
+    params: Promise<{ handle: string }>
+};
 
-export async function GET(_request: NextRequest, { params }: Params) {
-    const session = await auth.api.getSession(_request);
+export async function GET(request: NextRequest, { params }: Params) {
+    const session = await auth.api.getSession(request);
 
     if (!session) {
         return NextResponse.json(
@@ -48,11 +50,6 @@ export async function GET(_request: NextRequest, { params }: Params) {
             );
         }
 
-        const statsResult = await Users.getFollowStats(user.id);
-        const followStats = statsResult.success
-            ? { followers: statsResult.followers ?? 0, following: statsResult.following ?? 0 }
-            : { followers: 0, following: 0 };
-
         return NextResponse.json(
             {
                 success: true,
@@ -66,7 +63,8 @@ export async function GET(_request: NextRequest, { params }: Params) {
                     privateAccount: user.privateAccount,
                     role: user.role,
                     createdAt: user.createdAt,
-                    ...followStats,
+                    followers: result.followers,
+                    following: result.following,
                 },
             },
             { status: 200 }

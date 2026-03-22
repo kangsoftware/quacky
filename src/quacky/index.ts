@@ -316,16 +316,31 @@ export class Users {
                 }
             );
 
-            return {
-                success: true,
-                user: result as User | null,
+            if (!result) {
+                return {
+                    success: true,
+                    user: null,
+                    followers: 0,
+                    following: 0,
+                };
             }
 
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : "Unknown error";
+            const [followers, following] = await Promise.all([
+                prisma.follow.count({ where: { followingId: result.id } }),
+                prisma.follow.count({ where: { followerId: result.id } }),
+            ]);
+
+            return {
+                success: true,
+                user: result as User,
+                followers,
+                following,
+            }
+
+        } catch (err: any) {
             return {
                 success: false,
-                error: message,
+                error: err.message,
             }
         }
     }

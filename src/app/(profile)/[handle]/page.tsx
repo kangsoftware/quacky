@@ -16,13 +16,13 @@ import FollowButton from "@/components/quacky-ui/follow-button";
 
 import { Users, Posts as Post } from "@/quacky"
 
-interface PageParam {
+interface Params {
     params: Promise<{
         handle: string;
     }>;
 }
 
-export default async function ProfilePage({ params }: PageParam) {
+export default async function ProfilePage({ params }: Params) {
     const { handle } = await params;
 
     const result = await Users.getUserbyHandle(handle);
@@ -32,16 +32,10 @@ export default async function ProfilePage({ params }: PageParam) {
         notFound();
     }
 
-    const followStatsResult = await Users.getFollowStats(user.id);
-    const followStats = followStatsResult.success
-        ? {
-            following: followStatsResult.following ?? 0,
-            followers: followStatsResult.followers ?? 0,
-        }
-        : {
-            following: 0,
-            followers: 0,
-        };
+    const followStats = {
+        followers: result.followers ?? 0,
+        following: result.following ?? 0,
+    };
 
     if (user.banned) {
         return (

@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/client/auth";
 import { Button } from "@/components/ui/button";
 
-type FollowButtonProps = {
+interface Props {
     targetUserId: string;
-};
+}
 
-export default function FollowButton({ targetUserId }: FollowButtonProps) {
+export default function FollowButton({ targetUserId }: Props) {
     const router = useRouter();
     const { data: session, isPending } = authClient.useSession();
 
