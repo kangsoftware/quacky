@@ -395,6 +395,56 @@ export class Users {
         }
     }
 
+    static async get() {
+        try {
+            const result = await prisma.user.findMany(
+                {
+                    where: {
+                        banned: false,
+                    },
+                    orderBy: {
+                        createdAt: "desc",
+                    }
+                }
+            );
+
+            const users = result.map(({ email: _email, ...user }) => user);
+
+            return {
+                success: true,
+                users,
+            };
+        } catch (err: any) {
+            return {
+                success: false,
+                error: err.message,
+            };
+        }
+    }
+
+    static async getHandle(handle: string) {
+        try {
+            const result = await prisma.user.findFirst(
+                {
+                    where: {
+                        handle,
+                        banned: false,
+                    },
+                }
+            );
+
+            return {
+                success: true,
+                user: result as User | null,
+            }
+        } catch (err: any) {
+            return {
+                success: false,
+                error: err.message,
+            };
+        }
+    }
+
     static async ban(userId: string) {
         try {
             await prisma.user.update(

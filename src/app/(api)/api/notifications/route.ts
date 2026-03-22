@@ -1,3 +1,7 @@
+// (c) 2025-2026 Linus Kang. Licensed under the Creative Commons Attribution-NonCommercial 4.0
+// For more information, refer to https://creativecommons.org/licenses/by-nc/4.0/
+// This file is a part of the Quacky project. For more information, see https://kang.software/git/quacky
+
 import { NotifyService } from "@/quacky"
 import { auth } from "@/server/auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -14,10 +18,12 @@ export async function GET(request: NextRequest) {
 
     try {
         const result = await NotifyService.getForUser(session.user.id);
+
         return NextResponse.json(result);
-    } catch (error: any) {
+
+    } catch (err: any) {
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: err.message },
             { status: 500 }
         );
     }
@@ -66,11 +72,20 @@ export async function PATCH(request: NextRequest) {
 
     try {
         const { notificationId } = await request.json();
+
         const result = await NotifyService.markAsRead(notificationId);
-        return NextResponse.json(result);
-    } catch (error: any) {
+
         return NextResponse.json(
-            { success: false, error: error.message },
+            {
+                success: true,
+                result
+            },
+            { status: 200 }
+        );
+
+    } catch (err: any) {
+        return NextResponse.json(
+            { success: false, error: err.message },
             { status: 500 }
         );
     }

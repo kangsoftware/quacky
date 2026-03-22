@@ -2,11 +2,16 @@
 // For more information, refer to https://creativecommons.org/licenses/by-nc/4.0/
 // This file is a part of the Quacky project. For more information, see https://kang.software/git/quacky
 
-import { Posts } from "@/quacky"
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/server/auth";
 
-export async function POST(request: NextRequest) {
+import { Users } from "@/quacky";
+
+interface Params {
+    params: Promise<{ handle: string }>
+};
+
+export async function POST(request: NextRequest, { params }: Params) {
     const session = await auth.api.getSession(request);
 
     if (!session) {
@@ -17,23 +22,29 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-        const body = await request.json();
-        const postId = body.postId;
+        const { handle } = await params;
 
-        if (!postId) {
+        const target = await Users.getHandle(handle);
+
+        if (!target.success || !target.user) {
             return NextResponse.json(
-                { success: false, error: "Invalid post ID" },
-                { status: 400 }
+                { success: false, error: "User not found" },
+                { status: 404 }
             );
         }
 
-        // repost
-        const result = await Posts.repost(postId, session.user.id);
+        // follow
+        await Users.follow(
+            session.user.id,
+            target.user.id
+        );
 
         return NextResponse.json(
-            { success: true, result },
-            { status: 200 }
-        );
+            {
+                success: true,
+                following: true
+            }, { status: 200 }
+        )
 
     } catch (err: any) {
         return NextResponse.json(
@@ -41,4 +52,5 @@ export async function POST(request: NextRequest) {
             { status: 500 }
         );
     }
+
 }

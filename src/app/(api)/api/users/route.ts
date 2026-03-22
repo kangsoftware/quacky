@@ -2,11 +2,12 @@
 // For more information, refer to https://creativecommons.org/licenses/by-nc/4.0/
 // This file is a part of the Quacky project. For more information, see https://kang.software/git/quacky
 
-import { Posts } from "@/quacky"
 import { NextRequest, NextResponse } from "next/server";
+import { Users } from "@/quacky";
+
 import { auth } from "@/server/auth";
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
     const session = await auth.api.getSession(request);
 
     if (!session) {
@@ -17,22 +18,14 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-        const body = await request.json();
-        const postId = body.postId;
-
-        if (!postId) {
-            return NextResponse.json(
-                { success: false, error: "Invalid post ID" },
-                { status: 400 }
-            );
-        }
-
-        // repost
-        const result = await Posts.repost(postId, session.user.id);
+        const result = await Users.get();
 
         return NextResponse.json(
-            { success: true, result },
-            { status: 200 }
+            {
+                success: true,
+                users: result,
+            },
+             { status: 200 }
         );
 
     } catch (err: any) {

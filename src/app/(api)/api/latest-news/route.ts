@@ -1,3 +1,7 @@
+// (c) 2025-2026 Linus Kang. Licensed under the Creative Commons Attribution-NonCommercial 4.0
+// For more information, refer to https://creativecommons.org/licenses/by-nc/4.0/
+// This file is a part of the Quacky project. For more information, see https://kang.software/git/quacky
+
 import { auth } from "@/server/auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,7 +10,7 @@ export async function GET(req: NextRequest) {
 
     if (!session) {
         return NextResponse.json(
-            { error: "Unauthorized" }, 
+            { error: "Unauthorized" },
             { status: 401 }
         );
     }

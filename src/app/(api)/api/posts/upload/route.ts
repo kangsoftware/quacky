@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
 
         if (file.size > maxBytes) {
             return NextResponse.json(
-                { success: false, error: `File is too large for ${kind} uploads` },
+                { success: false, error: `File is too large` },
                 { status: 400 }
             );
         }

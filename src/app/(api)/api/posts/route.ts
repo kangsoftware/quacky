@@ -1,34 +1,12 @@
-import { Posts } from "@/quacky";
+// (c) 2025-2026 Linus Kang. Licensed under the Creative Commons Attribution-NonCommercial 4.0
+// For more information, refer to https://creativecommons.org/licenses/by-nc/4.0/
+// This file is a part of the Quacky project. For more information, see https://kang.software/git/quacky
+
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/server/auth";
 
-const MAX_ATTACHMENTS_PER_POST = 3;
-
-type PostAttachment = {
-    key: string;
-    url: string;
-    name: string;
-    mimeType: string;
-    size: number;
-    kind: "image" | "video" | "file";
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-    return typeof value === "object" && value !== null;
-};
-
-const isAttachment = (value: unknown): value is PostAttachment => {
-    if (!isRecord(value)) return false;
-
-    return Boolean(
-        typeof value.key === "string"
-        && typeof value.url === "string"
-        && typeof value.name === "string"
-        && typeof value.mimeType === "string"
-        && typeof value.size === "number"
-        && (value.kind === "image" || value.kind === "video" || value.kind === "file")
-    );
-};
+import { Posts } from "@/quacky";
+import config from "@/config.json";
 
 export async function GET(request: NextRequest) {
     const session = await auth.api.getSession(request);
@@ -41,12 +19,14 @@ export async function GET(request: NextRequest) {
     }
 
     try {
+        // Get
         const result = await Posts.get();
+
         return NextResponse.json(result);
 
-    } catch (error: any) {
+    } catch (err: any) {
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: err.message },
             { status: 500 }
         );
     }
@@ -75,9 +55,9 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        if (attachments.length > MAX_ATTACHMENTS_PER_POST || !attachments.every(isAttachment)) {
+        if (attachments.length > config.posting.maxAttachments) {
             return NextResponse.json(
-                { success: false, error: `A post can have at most ${MAX_ATTACHMENTS_PER_POST} valid attachments` },
+                { success: false, error: `A post can have at most ${config.posting.maxAttachments} valid attachments` },
                 { status: 400 }
             );
         }
@@ -89,10 +69,10 @@ export async function POST(request: NextRequest) {
             { status: 201 }
         );
 
-    } catch (error: any) {
+    } catch (err: any) {
 
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: err.message },
             { status: 500 }
         );
 
