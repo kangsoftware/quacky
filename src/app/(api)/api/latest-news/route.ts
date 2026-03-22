@@ -19,13 +19,13 @@ export async function GET(req: NextRequest) {
         {
             updated: "2024-06-01T12:00:00Z",
             news: [
-                {
-                    id: "1",
-                    category: "Quacky Release",
-                    title: "Quacky alpha-v1.1 Released with New Features",
-                    link: "https://linuskang.au/blog/quacky-release-notes",
-                    time: "2026-03-22T12:00:00Z"
-                },
+                // {
+                //     id: "1",
+                //     category: "Quacky Release",
+                //     title: "Quacky alpha-v1.1 Released with New Features",
+                //     link: "https://linuskang.au/blog/quacky-release-notes",
+                //     time: "2026-03-22T12:00:00Z"
+                // },
                 // {
                 //     id: "2",
                 //     category: "Technology",

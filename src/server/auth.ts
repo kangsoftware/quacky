@@ -23,6 +23,12 @@ export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   trustedOrigins: [env.BETTER_AUTH_URL],
 
+  session: {
+    cookieCache: {
+      enabled: false,
+    },
+  },
+
   user: {
     additionalFields: {
       handle: {

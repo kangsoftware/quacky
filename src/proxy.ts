@@ -12,6 +12,8 @@ export default async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL('/signin', request.url));
     }
 
+    console.log(session.user.banned)
+
     if (session.user.banned) {
         return NextResponse.json(
             { success: false, error: "Your account has been banned. Contact an admin for assistance." },
@@ -19,9 +21,13 @@ export default async function proxy(request: NextRequest) {
         );
     }
 
+
+
     return NextResponse.next();
 }
 
 export const config = {
-  matcher: '/((?!_next/static|_next/image|signin|api/auth|api/account/create|onboarding|assets/quackythebird).*)|terms|privacy',
-}
+  matcher: [
+    '/((?!_next/static|_next/image|signin|api/auth|api/account/create|onboarding|assets/quackythebird|terms|privacy).*)',
+  ],
+};
