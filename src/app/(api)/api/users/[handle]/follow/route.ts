@@ -11,6 +11,52 @@ interface Params {
     params: Promise<{ handle: string }>
 };
 
+export async function GET(request: NextRequest, { params }: Params) {
+    const session = await auth.api.getSession(request);
+
+    if (!session) {
+        return NextResponse.json(
+            { success: false, error: "Unauthorized" },
+            { status: 401 }
+        );
+    }
+
+    try {
+        const { handle } = await params;
+
+        const target = await Users.getHandle(handle);
+
+        if (!target.success || !target.user) {
+            return NextResponse.json(
+                { success: false, error: "User not found" },
+                { status: 404 }
+            );
+        }
+
+        const status = await Users.isFollowing(session.user.id, target.user.id);
+
+        if (!status.success) {
+            return NextResponse.json(
+                { success: false, error: status.error ?? "Failed to check follow status" },
+                { status: 500 }
+            );
+        }
+
+        return NextResponse.json(
+            {
+                success: true,
+                following: Boolean(status.following),
+            },
+            { status: 200 }
+        );
+    } catch (err: any) {
+        return NextResponse.json(
+            { success: false, error: err.message },
+            { status: 500 }
+        );
+    }
+}
+
 export async function POST(request: NextRequest, { params }: Params) {
     const session = await auth.api.getSession(request);
 

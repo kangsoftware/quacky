@@ -7,10 +7,10 @@ import { authClient } from "@/client/auth";
 import { Button } from "@/components/ui/button";
 
 interface Props {
-    targetUserId: string;
+    targetUserHandle: string;
 }
 
-export default function FollowButton({ targetUserId }: Props) {
+export default function FollowButton({ targetUserHandle }: Props) {
     const router = useRouter();
     const { data: session, isPending } = authClient.useSession();
 
@@ -18,7 +18,8 @@ export default function FollowButton({ targetUserId }: Props) {
     const [loading, setLoading] = useState(false);
 
     const viewerId = session?.user?.id;
-    const isOwnProfile = viewerId === targetUserId;
+    const viewerHandle = session?.user?.handle;
+    const isOwnProfile = viewerHandle === targetUserHandle;
 
     useEffect(() => {
         if (!viewerId || isOwnProfile) {
@@ -30,7 +31,20 @@ export default function FollowButton({ targetUserId }: Props) {
 
         const loadFollowStatus = async () => {
             try {
-                const response = await fetch(`/api/users/follow?userId=${targetUserId}`);
+                const response = await fetch(`/api/users/${targetUserHandle}/follow`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    if (!cancelled) {
+                        setFollowing(false);
+                    }
+                    return;
+                }
+
                 const data = await response.json();
 
                 if (!cancelled) {
@@ -49,7 +63,7 @@ export default function FollowButton({ targetUserId }: Props) {
         return () => {
             cancelled = true;
         };
-    }, [targetUserId, viewerId, isOwnProfile]);
+    }, [targetUserHandle, viewerId, isOwnProfile]);
 
     const handleToggle = async () => {
         if (!viewerId || isOwnProfile || loading) {
@@ -57,18 +71,20 @@ export default function FollowButton({ targetUserId }: Props) {
         }
 
         const nextFollowing = !following;
-        const method = nextFollowing ? "POST" : "DELETE";
 
         setLoading(true);
         setFollowing(nextFollowing);
 
         try {
-            const response = await fetch("/api/users/follow", {
-                method,
+            const endpoint = nextFollowing
+                ? `/api/users/${targetUserHandle}/follow`
+                : `/api/users/${targetUserHandle}/unfollow`;
+
+            const response = await fetch(endpoint, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userId: targetUserId }),
             });
 
             if (!response.ok) {

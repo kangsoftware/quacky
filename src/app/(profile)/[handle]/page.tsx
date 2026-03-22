@@ -115,7 +115,7 @@ export default async function ProfilePage({ params }: Params) {
                                         </p>
                                     )}
                                     {/* <div className="flex gap-3">
-                                        <FollowButton targetUserId={user.id} />
+                                        <FollowButton targetUserHandle={user.handle} />
                                         <Button variant="outline" className="rounded-lg font-bold cursor-pointer">Message</Button>
                                     </div> */}
                                 </div>
@@ -196,7 +196,7 @@ export default async function ProfilePage({ params }: Params) {
                                 )}
 
                                 <div className="flex gap-3">
-                                    <FollowButton targetUserId={user.id} />
+                                    <FollowButton targetUserHandle={user.handle} />
                                     {/* <Button variant="outline" className="rounded-lg font-bold cursor-pointer">Message</Button> */}
                                 </div>
                             </div>
