@@ -28,6 +28,6 @@ export default async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|signin|api/auth|api/account/create|onboarding|assets/quackythebird|terms|privacy).*)',
+    '/((?!_next/static|_next/image|signin|api/auth|api/account/create|onboarding|assets/quackythebird|api|terms|privacy).*)',
   ],
 };
